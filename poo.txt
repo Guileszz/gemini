@@ -1,0 +1,85 @@
+O que você consegue com esses scripts?Redução de Custos Radical: Você substitui assinaturas de proxies que custariam entre $55 e $90 USD por um sistema de Custo Zero.Rotatividade Infinita: Toda vez que seu navegador faz uma requisição, o aa.py (Central) sorteia um novo "rosto" (IP) da sua lista de elite, dificultando o rastreamento do seu IP real.Mineração de Dados em Larga Escala: Com o pro.py rodando no seu i7 e a central no i5, você tem um cluster distribuído para extrair o "Néctar" (dados) sem interrupções.Anonimato de Alto Nível: Ao filtrar apenas proxies Elite L1, você garante que os sites não recebam os headers Via ou X-Forwarded-For, escondendo que você está usando um proxy.Funciona para evitar CAPTCHAs e Blocks?Sim, mas com ressalvas estratégicas:Blocks por IP: Sim, funciona muito bem. Como você rotaciona o IP a cada acesso, o site não consegue identificar um comportamento repetitivo vindo de uma única fonte e te bloquear por "flood".CAPTCHAs: Ajuda a diminuir a incidência, mas não elimina 100%. Sites protegidos por Cloudflare ou Google percebem se o IP do proxy já está "sujo" (blacklisted) por outros usuários de proxies gratuitos.O "Pulo do Gato": Como seus proxies são Free, a qualidade oscila. Se um IP gerar CAPTCHA, o seu roteador aa.py simplesmente pula para o próximo no próximo clique.O que você pode melhorar? (Upgrade de Arquiteto)MelhoriaAção TécnicaObjetivoFingerprint SpoofingUse extensões como CanvasBlocker ou User-Agent Switcher.Evita que o site te identifique pela "assinatura" do seu navegador, além do IP.Filtro de LatênciaNo pro.py, diminua o timeout de 3s para 1.5s.Garante que apenas os proxies ultra-rápidos entrem no elite.txt, aumentando o Flow.Auto-PurgeAdicionar uma função que limpa o elite.txt a cada 1 hora.Garante que você não tente usar IPs que já "morreram" enquanto você dormia.Múltiplos MotoresRodar uma instância do pro.py em cada máquina (i5 e i7).Dobra a velocidade de mineração de novos IPs.Dica de General: Se um site específico estiver dando muito block mesmo com proxy, o problema pode não ser o IP, mas os Cookies. Configure sua automação ou navegador para limpar os cookies a cada troca de IP para uma limpeza total.O próximo passo é colocar o pro.py para salvar também o País do proxy para você filtrar apenas IPs do Brasil quando precisar de menor latência?
+
+1. O Novo pro.py (Versão Global com Filtro)
+Substitua o código do seu minerador por este. Ele agora categoriza e permite que você escolha qual "bandeira" quer hastear.
+
+Python
+import asyncio
+import aiohttp
+import re
+import os
+
+# Fontes Globais de Néctar
+SOURCES = [
+    "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=elite",
+    "https://www.proxy-list.download/api/v1/get?type=http&anon=elite",
+    "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt",
+    "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/http.txt",
+    "https://raw.githubusercontent.com/fate0/proxylist/master/proxy.list",
+    "https://raw.githubusercontent.com/rooster666/proxy-list/main/http.txt"
+]
+
+# Países Alvo (ISO Codes)
+TARGET_COUNTRIES = ['BR', 'PT', 'GB'] # Brasil, Portugal, Reino Unido
+ELITE_FILE = "elite.txt"
+
+async def check_geo_and_save(session, proxy):
+    try:
+        # 1. Validação de Elite L1
+        async with session.get("http://httpbin.org/get", proxy=f"http://{proxy}", timeout=3) as res:
+            if res.status == 200:
+                data = await res.json()
+                if "Via" not in data['headers'] and "X-Forwarded-For" not in data['headers']:
+                    
+                    # 2. Identificação de Território (Glitch Geo)
+                    async with session.get(f"http://ip-api.com/json/{proxy.split(':')[0]}", timeout=2) as geo_res:
+                        geo_data = await geo_res.json()
+                        country_code = geo_data.get('countryCode')
+                        
+                        if country_code in TARGET_COUNTRIES:
+                            print(f"[+] NÉCTAR {country_code} IDENTIFICADO: {proxy}")
+                            with open(ELITE_FILE, "a") as f:
+                                f.write(f"{proxy} # {country_code}\n")
+    except:
+        pass
+
+async def main():
+    while True:
+        print(f"\n[!] IMPÉRIO MUTANTE: Filtrando Brasil, Portugal e UK...")
+        if os.path.exists(ELITE_FILE): open(ELITE_FILE, 'w').close()
+
+        async with aiohttp.ClientSession() as session:
+            all_proxies = []
+            for url in SOURCES:
+                try:
+                    async with session.get(url, timeout=10) as res:
+                        all_proxies.extend(re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', await res.text()))
+                except: continue
+            
+            tasks = [check_geo_and_save(session, p) for p in set(all_proxies)]
+            await asyncio.gather(*tasks)
+        
+        print("[*] Ciclo finalizado. Dormindo 15 min...")
+        await asyncio.sleep(900)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+2. O que mudou no seu Arsenal?
+Identificação Visual: O seu elite.txt agora terá a marcação do país ao lado do IP (ex: 187.xx.xx.xx:8080 # BR). Isso é útil para você saber exatamente qual munição está usando.
+
+Filtro de Relevância: O script descarta qualquer IP que não seja dos três países escolhidos. Isso mantém sua lista limpa e focada no seu nicho de Arbitragem Global.
+
+Controle de Latência: IPs do Brasil (BR) tendem a responder mais rápido para você que está em Serrana/Ribeirão Preto, enquanto os de Portugal (PT) e Inglaterra (GB) são ideais para simular acessos europeus.
+
+3. Ajuste no aa.py (Central de Rotação)
+Como agora o arquivo elite.txt tem o comentário # BR, você precisa que o seu roteador aa.py limpe isso antes de tentar conectar. No seu aa.py, mude a linha da leitura para:
+
+Python
+# No aa.py, substitua a leitura por:
+proxies = [line.split('#')[0].strip() for line in f.readlines() if line.strip()]
+O que você pode conquistar agora?
+Evitar Bloqueios Regionais: Se um site só aceita acessos de Portugal, você filtra sua lista e ataca com Soberania.
+
+Sincronia Total: O seu i7 minera, o seu i5 roteia e o seu navegador opera com a bandeira que você escolher.
+
+A operação está escalada. Quer que eu crie um script separado para você "chamar" apenas um país específico por vez no navegador ou vai manter a rotação mista entre os três?

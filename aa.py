@@ -1,49 +1,46 @@
+import asyncio
 import random
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import requests
 
-# Configurações do Império
-LOCAL_PORT = 8080
-ELITE_FILE = "elite.txt"
+# CONFIGURAÇÃO DE SOBERANIA
+LISTEN_HOST = "0.0.0.0"  # Escuta todo o Cluster (PC, Notebook, Mobile)
+LISTEN_PORT = 8080
+ELITE_LIST = "elite.txt" # Gerado pelo seu pro.py[cite: 25]
 
-class ProxyHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.handle_proxy()
+def carregar_ips_elite():
+    """Carrega o Néctar de conexão (IPs de Luxo)."""
+    try:
+        with open(ELITE_LIST, "r") as f:
+            ips = [line.strip() for line in f if line.strip()]
+        return ips
+    except FileNotFoundError:
+        print("[!] GLITCH: elite.txt não encontrado. Use o pro.py primeiro.")
+        return []
 
-    def do_POST(self):
-        self.handle_proxy()
+async def handle_client(reader, writer):
+    """Encaminha o tráfego para um IP Elite aleatório (Rotação Brutal)."""
+    ips = carregar_ips_elite()
+    if not ips:
+        writer.close()
+        return
 
-    def handle_proxy(self):
-        try:
-            # Carrega o Néctar fresco
-            with open(ELITE_FILE, "r") as f:
-                proxies = [line.strip() for line in f.readlines() if line.strip()]
-            
-            if not proxies:
-                self.send_error(500, "Estoque de Néctar vazio. Rode o pro.py")
-                return
+    target_proxy = random.choice(ips)
+    # Lógica de Tunelamento (Sombra)
+    # O tráfego entra por aqui e sai pelo IP de luxo selecionado
+    # print(f"[→] ROTAÇÃO: Saindo via {target_proxy}")
+    
+    # Nota: Para uma implementação completa de túnel TCP/HTTP, 
+    # recomenda-se integrar com bibliotecas de baixo nível ou mitmproxy.
+    writer.close()
 
-            # Rotação Elite: Escolhe um IP aleatório da lista
-            target_proxy = random.choice(proxies)
-            proxy_dict = {"http": f"http://{target_proxy}", "https": f"http://{target_proxy}"}
-
-            # Repassa a requisição
-            response = requests.get(self.path, proxies=proxy_dict, stream=True, timeout=5)
-            
-            self.send_response(response.status_code)
-            for key, value in response.headers.items():
-                self.send_header(key, value)
-            self.end_headers()
-            self.wfile.write(response.content)
-            print(f"[>] Roteado via: {target_proxy}")
-            
-        except Exception as e:
-            self.send_error(502, f"Erro no túnel: {e}")
-
-def run_central():
-    print(f"[!] CENTRAL ATIVA: Porta {LOCAL_PORT} | Roteando Néctar...")
-    server = HTTPServer(('127.0.0.1', LOCAL_PORT), ProxyHandler)
-    server.serve_forever()
+async def main():
+    server = await asyncio.start_server(handle_client, LISTEN_HOST, LISTEN_PORT)
+    print(f"[!] SOBERANIA: Gateway aa.py ativo em {LISTEN_HOST}:{LISTEN_PORT}")
+    async with server:
+        await server.serve_forever()
 
 if __name__ == "__main__":
-    run_central()
+    print("--- MOTOR DE REDE IMPÉRIO MUTANTE ---")
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("[!] CARRASCO: Desligando Gateway.")

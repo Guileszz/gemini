@@ -1,0 +1,19 @@
+import re
+import requests
+
+def extrair_ips_das_fontes():
+    fontes = [
+        "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=elite",
+        "https://www.proxy-list.download/api/v1/get?type=http&anon=elite",
+        # Adicione aqui mais fontes de Néctar
+    ]
+    pool_bruto = []
+    for url in fontes:
+        try:
+            res = requests.get(url, timeout=10)
+            # Regex para identificar padrão de IP:Porta
+            ips = re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', res.text)
+            pool_bruto.extend(ips)
+        except:
+            continue
+    return list(set(pool_bruto)) # Remove duplicados

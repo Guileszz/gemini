@@ -1,0 +1,32 @@
+1. EXTRAÇÃO (PLUGGING AS APIS)
+Nesta fase, o foco é a Infiltração. Conectamos o motor de busca às fontes de Néctar (APIs provedoras) utilizando a infraestrutura de IPs Elite para evitar bloqueios.
+
+Ação: O script pluga_e_extrai.py faz requisições assíncronas às APIs externas.
+
+Camada de Sombra: Todo o tráfego é roteado pelo aa.py na porta 8080 para garantir anonimato e rotação de proxies.  
+
+Execução: O Ryzen 9 orquestra as conexões de alta volumetria, enquanto o i7 e o i5 mantêm workers secundários abertos para manter o fluxo constante.
+
+2. REFINARIA (THE CHECK)
+O "Gatekeeper" da operação. Aqui, o script atua como um Carrasco: se o dado não é perfeito, ele é deletado antes de chegar à base principal.
+
+Ação: O dado extraído entra em um validador local (rodando no i7 para balanceamento de carga).
+
+Critérios de Elite:
+
+Status Check: Valida se o link/recurso está 200 OK.
+
+Integridade: Verifica se o JSON possui todos os campos obrigatórios.
+
+Néctar Score: Filtra apenas os ativos que possuem alta demanda ou valor de arbitragem.
+
+Resultado: Apenas o "Ouro Digital" avança para a próxima fase.
+
+3. INJEÇÃO (UPLOAD PARA NOSSA API)
+A fase final de Soberania. O dado refinado é enviado para a sua API centralizada (Universo X) para ser monetizado ou utilizado em automações.
+
+Ação: Envio via POST utilizando compressão Brotli ou Gzip para reduzir o consumo de banda a quase zero.
+
+Persistência: O dado é catalogado no banco de dados principal, pronto para ser consumido pelos seus bots de arbitragem ou criação de ativos.
+
+Sincronização: O status de sucesso é enviado para o seu monitor (via Termux/Mobile) para acompanhamento em tempo real.

@@ -1,0 +1,41 @@
+Python
+import logging
+import os
+from datetime import datetime
+
+# Cria a pasta de logs se ela não existir (Automação Custo Zero)
+if not os.path.exists('logs'):
+    os.makedirs('logs')
+
+# CONFIGURAÇÃO DO RASTRO
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s | %(levelname)s | %(message)s',
+    handlers=[
+        logging.FileHandler('logs/auditoria.log', encoding='utf-8'),
+        logging.StreamHandler() # Continua mandando pro terminal pra você ver no Ryzen 9
+    ]
+)
+
+logger = logging.getLogger("Entidade12")
+⚖️ 3. APLICANDO A AUDITORIA NO TRIBUNAL
+Dentro da sua função tribunal_de_proxies, vamos trocar os print por logger.info e logger.error para gerar o histórico:  
+
+Python
+async def tribunal_de_proxies():
+    global PROXIES_VIVOS
+    inicio = time.time()
+    logger.info("INICIANDO TRIBUNAL: Extraindo Néctar das fontes...")
+
+    # ... (seu código de extração) ...
+    
+    total_brutos = len(brutos)
+    logger.info(f"CAPTURA: {total_brutos} proxies brutos encontrados.")
+
+    # ... (seu código de checagem) ...
+
+    PROXIES_VIVOS = [p for p in resultados if p is not None]
+    duracao = round(time.time() - inicio, 2)
+    
+    logger.info(f"RELATÓRIO DE SOBERANIA: {len(PROXIES_VIVOS)} Elite / {total_brutos} Mortos.")
+    logger.info(f"LATÊNCIA DE CICLO: {duracao} segundos.")

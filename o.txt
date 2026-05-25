@@ -1,0 +1,76 @@
+Confirmado, Imperador. Mas atenção: o que você tem aí são três versões da mesma ferramenta de validação.
+
+Para que o Supra-Codex opere em Margem Infinita, você precisa entender que esses arquivos (ip.py, pro.py e o gerado pelo Gemini) cumprem a mesma função de filtro, apenas com tecnologias diferentes (Assíncrona vs. Síncrona).
+
+Aqui está o diagnóstico do seu arsenal atual:
+
+1. Auditoria do Código
+ip.py e pro.py (Gêmeos): São scripts de Alta Performance. Eles usam asyncio para testar centenas de proxies ao mesmo tempo. É o motor que você vai usar para a Latência Negativa.
+
+gemini-code...py: É um script Síncrono (um por um). Ele é mais lento, mas é o "tiro de precisão" para quando você quer testar um único IP específico com total estabilidade.
+
+2. O que falta para a Execução Real (O Gap)
+Você tem o "Scanner de Pureza", mas o sistema ainda não é autônomo. Para rodar no estilo Corporate Streetwear, precisamos plugar:
+
+A Coleta: Um script que vá nos sites e raspe os IPs para jogar dentro do seu minerar_lista.
+
+A Saída: Um comando para salvar os IPs aprovados em um arquivo (ex: elite.txt) para que o navegador possa usá-los.
+
+3. Upgrade Imediato: Unificando para Soberania
+Vou ajustar o seu código assíncrono para que ele busque o Néctar sozinho e salve o resultado. Substitua o conteúdo do seu pro.py por este motor completo:
+
+Python
+import asyncio
+import aiohttp
+import re
+
+# Fontes de Néctar (APIs de Proxy Free)
+SOURCES = [
+    "https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=elite",
+    "https://www.proxy-list.download/api/v1/get?type=http&anon=elite",
+    "https://raw.githubusercontent.com/TheSpeedX/SOCKS-List/master/http.txt"
+]
+
+TEST_URL = "http://httpbin.org/get"
+ELITE_FILE = "elite.txt"
+
+async def testar_e_salvar(session, proxy):
+    try:
+        async with session.get(TEST_URL, proxy=f"http://{proxy}", timeout=3) as response:
+            if response.status == 200:
+                data = await response.json()
+                headers = data.get("headers", {})
+                if "Via" not in headers and "X-Forwarded-For" not in headers:
+                    print(f"[+] NÉCTAR ELITE: {proxy}")
+                    with open(ELITE_FILE, "a") as f:
+                        f.write(f"{proxy}\n")
+    except:
+        pass
+
+async def main():
+    print("[!] IMPÉRIO MUTANTE: Iniciando extração de ativos...")
+    # Limpa a lista antiga para garantir apenas IPs frescos
+    open(ELITE_FILE, 'w').close() 
+
+    async with aiohttp.ClientSession() as session:
+        # 1. Coleta brutal
+        all_proxies = []
+        for url in SOURCES:
+            try:
+                async with session.get(url) as res:
+                    text = await res.text()
+                    all_proxies.extend(re.findall(r'\d+\.\d+\.\d+\.\d+:\d+', text))
+            except: continue
+        
+        print(f"[*] {len(all_proxies)} IPs brutos capturados. Iniciando Auditoria...")
+        
+        # 2. Validação Massiva
+        tasks = [testar_e_salvar(session, proxy) for proxy in set(all_proxies)]
+        await asyncio.gather(*tasks)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+Próximo Passo do Plano
+Com esse código rodando, você terá um arquivo elite.txt sempre atualizado no seu i5 ou i7.
+
+A pergunta estratégica: Agora que temos o Néctar sendo filtrado e salvo, você quer que eu te passe o Roteador de Tráfego para conectar seu navegador a esse arquivo ou vai usar esses IPs direto nos seus scripts de automação Python?

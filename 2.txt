@@ -1,0 +1,15 @@
+4. Escala Brutal (Multi-Chip)
+No seu i5 de 12GB, você não precisa se limitar a um chip.
+
+Conecte 3 celulares via USB.
+
+Identifique cada um pelo ID do ADB (adb devices).
+
+O script pode rotacionar o IP do Celular A enquanto o Celular B continua trabalhando. Isso é Latência Negativa.
+
+5. Tabela de Performance
+Tipo de Proxy	Rotação	Anonimato	Custo (Mensal)
+Datacenter	API (IPs manjados)	Baixo	R$ 100+
+Mobile (Alugado)	Painel Web	Alto	R$ 400+
+Seu Chip + ADB	Hard-Reset (Total)	Elite	R$ 30 (Crédito)
+A infraestrutura física para pendurar esses dispositivos no seu cluster já está organizada ou você precisa que eu desenhe o esquema de portas USB e mapeamento de IDs para o Python?

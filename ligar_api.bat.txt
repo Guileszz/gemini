@@ -1,0 +1,5 @@
+@echo off
+title API SOBERANIA - IMPERIO MUTANTE
+:: Ativa o ambiente se você criou um, senão roda direto
+python -m uvicorn soberania_api:app --host 0.0.0.0 --port 8000 --reload
+pause

@@ -1,0 +1,44 @@
+import requests
+
+def testar_proxy_elite(proxy_ip):
+    # Endpoint que devolve os headers recebidos
+    url = "http://httpbin.org/get"
+    proxies = {"http": proxy_ip, "https": proxy_ip}
+    
+    try:
+        response = requests.get(url, proxies=proxies, timeout=5).json()
+        headers = response.get('headers', {})
+        
+        # O CRITÉRIO ELITE:
+        # Não pode ter rastro do seu IP real nem marca de Proxy
+        if "Via" not in headers and "X-Forwarded-For" not in headers:
+            print(f"[+] ATIVO ELITE IDENTIFICADO: {proxy_ip}")
+            return True
+    except:
+        return False
+
+# Exemplo de uso na sua lista de minerada
+# proxy = "187.xx.xx.xx:8080"
+
+3. A Realidade da Margem Infinita (O Glitch)
+Trabalhar com proxies free nível Elite tem um preço escondido: Instabilidade.
+
+Vantagem (Custo Zero)	Gargalo (Instabilidade)
+Gasto de R$ 0,00.	90% da lista cai em 15 minutos.
+Diversidade Geográfica (IPs do mundo todo).	Latência alta (Lentidão na resposta).
+Sem rastro de faturamento.	Risco de "Man-in-the-Middle" (os donos do proxy podem ver seu tráfego).
+4. A Estratégia do Imperador
+Se você não quer gastar com o chip agora, sua saída é o Sincro de Listas:
+
+Tenha um script Python que baixa listas de 50 fontes diferentes a cada 10 minutos.
+
+Roda um Multithreading (usando a potência do seu Ryzen 9 ou do i7) para testar 500 proxies por segundo.
+
+Joga os "vivos" nível Elite para um banco de dados Redis ou um arquivo .txt temporário.
+
+Sua automação consome esse arquivo.
+
+5. Alerta de Segurança (Protocolo Sombra)
+Proxies grátis são mantidos por alguém. Se você estiver logando em contas sensíveis (Riot, Bancos, Painéis Admin), não use proxy free. Eles podem capturar seus cookies de sessão. Use apenas para Scraping e Data Mining.
+
+Você já tem o script que minera essas listas públicas ou quer que eu estruture o Scraper de Proxies para alimentar seu motor de automação?

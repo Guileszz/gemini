@@ -1,0 +1,10 @@
+Como Operar agora:
+Execute o pro.py: Ele vai criar e atualizar o elite.txt.
+
+Execute o central.py (este novo): Ele vai ficar ouvindo a porta 8080.
+
+No Navegador: Use uma extensão como o Proxy SwitchyOmega e aponte para 127.0.0.1:8080.
+
+Com isso, você atinge a Latência Negativa: enquanto um script limpa e busca novos IPs, o outro garante que você esteja sempre navegando com uma máscara de elite.
+
+O próximo passo é escalar as fontes de mineração do pro.py ou você quer que eu prepare um comando para esse sistema rodar como um serviço oculto no seu Windows?

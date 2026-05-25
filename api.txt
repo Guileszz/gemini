@@ -1,0 +1,54 @@
+1. O Conceito: Rotação via Hard-Reset (Modo Avião)
+Diferente de proxies de datacenter que trocam o IP via software, no chip de operadora (Mobile), o IP muda quando o modem se desconecta e reconecta na torre (CGNAT).
+
+O Fluxo de Execução:
+
+O script faz a tarefa (extração de Néctar).
+
+O script detecta bloqueio ou atinge o limite de requisições.
+
+O script envia um comando ADB (Android Debug Bridge) para o celular.
+
+O celular entra em Modo Avião (desliga o rádio).
+
+O celular sai do Modo Avião (força a operadora a entregar um Novo IP Elite).
+
+2. Arsenal Python: Script de Rotação (Scaffold)
+Como você opera com automação, este é o esqueleto para integrar no seu Supra-Codex Engine:
+
+Python
+import os
+import time
+import requests
+
+def rotacionar_ip_adb():
+    print("[!] Iniciando Glitch de IP: Rotacionando...")
+    # Comando para ativar modo avião
+    os.system("adb shell settings put global airplane_mode_on 1")
+    os.system("adb shell am broadcast -a android.intent.action.AIRPLANE_MODE")
+    time.sleep(3) # Latência de segurança
+    
+    # Comando para desativar modo avião
+    os.system("adb shell settings put global airplane_mode_on 0")
+    os.system("adb shell am broadcast -a android.intent.action.AIRPLANE_MODE")
+    print("[+] Novo IP Elite atribuído pela operadora.")
+    time.sleep(5) # Espera sinal estabilizar
+
+def verificar_ip_atual():
+    try:
+        ip = requests.get('https://api.ipify.org', timeout=10).text
+        return ip
+    except:
+        return "Offline"
+
+# Exemplo de loop de execução
+while True:
+    print(f"[*] Operando com IP: {verificar_ip_atual()}")
+    # ... aqui entra sua lógica de extração/automação ...
+    
+    # Gatilho de rotação (ex: a cada 10 execuções)
+    rotacionar_ip_adb()
+3. Transformando em "Elite" (Configuração de Rede)
+Para que o proxy seja classificado como Elite (Level 1), você precisa garantir que ele não envie os headers HTTP_VIA ou HTTP_X_FORWARDED_FOR.
+
+Se você usar o app ProxyPin ou o iProxy no seu Android conectado ao notebook, eles já cuidam disso. O servidor proxy rodando no celular repassa o tráfego de forma limpa, fazendo com que o site de destino (Habbo, Riot, TikTok) veja apenas um "usuário comum de 4G/5G da Vivo/Claro".
