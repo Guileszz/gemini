@@ -1,0 +1,2 @@
+# gemini
+atualizar scripts
